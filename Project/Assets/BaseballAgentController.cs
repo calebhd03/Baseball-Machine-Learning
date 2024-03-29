@@ -15,17 +15,14 @@ public class BaseballAgentController : Agent
     [SerializeField] Vector2 baseballSpawnAngleYRange;
     [SerializeField] Vector3 baseballSpawnPointDir;
 
-    [SerializeField] Transform bat;
-    [SerializeField] HingeJoint batHinge;
-    Rigidbody batHingeRB;
-    Rigidbody batRB;
+    //[SerializeField] Transform bat;
+    [SerializeField] ConfigurableJoint batHinge;
+    [SerializeField] Rigidbody batRB;
     [SerializeField] float batMaxSpeed;
     [SerializeField] float batSwingSpeed;
 
     public override void Initialize()
     {
-        batHingeRB = batHinge.GetComponent<Rigidbody>();
-        batRB = bat.GetComponent<Rigidbody>();
     }
 
     public override void OnEpisodeBegin()
@@ -41,10 +38,10 @@ public class BaseballAgentController : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(ball.transform.localPosition);
+        /*sensor.AddObservation(ball.transform.localPosition);
         sensor.AddObservation(ball.rb.velocity);
         sensor.AddObservation(bat.localPosition);
-        sensor.AddObservation(batRB.velocity);
+        sensor.AddObservation(batRB.velocity);*/
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -61,13 +58,14 @@ public class BaseballAgentController : Agent
 
         float batDistanceSpeed = 10f;
         // Bat distance from body
-        //float batDistance = Mathf.SmoothStep(batHinge.connectedAnchor.x, actionBuffers.ContinuousActions[0] * batDistanceSpeed, Time.deltaTime);
+        float batDistance = Mathf.SmoothStep(batHinge.targetPosition.x, actionBuffers.ContinuousActions[0] * batDistanceSpeed, Time.deltaTime);
 
         // Bat height
-        //float batHeight = Mathf.SmoothStep(batHinge.connectedAnchor.y, actionBuffers.ContinuousActions[1] * batDistanceSpeed, Time.deltaTime);
+        float batHeight = Mathf.SmoothStep(batHinge.targetPosition.y, actionBuffers.ContinuousActions[1] * batDistanceSpeed, Time.deltaTime);
 
         // Apply bat movements
-        //batHinge.connectedAnchor = new Vector3(batDistance, batHeight, 0);
+        batHinge.targetPosition = new Vector3(batDistance, batHeight, 0);
+        batHinge.anchor = Vector3.zero;
 
         // Swing bat forward
         batRB.AddForce(batRB.transform.forward * actionBuffers.ContinuousActions[2] * batSwingSpeed * Time.deltaTime, ForceMode.Force);
