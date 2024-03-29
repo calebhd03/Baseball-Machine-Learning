@@ -30,6 +30,13 @@ TagManager:
   - purpleAgent
   - purpleGoal
   - tile
+  - key
+  - blockLarge
+  - blockSmall
+  - blockVeryLarge
+  - lock
+  - dragon
+  - portal
   layers:
   - Default
   - TransparentFX
@@ -37,10 +44,10 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Bat
   - 
   - invisible
-  - 
+  - Player
   - 
   - 
   - 

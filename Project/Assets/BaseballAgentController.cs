@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class BaseballAgentController : Agent
 {
+    [Header("Baseball Values")]
     [SerializeField] Baseball ball;
     [SerializeField] Vector3 baseballSpawnPoint;
     [SerializeField] Vector2 baseballVelocityRange;
@@ -15,11 +16,17 @@ public class BaseballAgentController : Agent
     [SerializeField] Vector2 baseballSpawnAngleYRange;
     [SerializeField] Vector3 baseballSpawnPointDir;
 
+    [Header("References")]
     //[SerializeField] Transform bat;
-    [SerializeField] ConfigurableJoint batHinge;
+    [SerializeField] Transform batRotObj;
     [SerializeField] Rigidbody batRB;
+    [SerializeField] Rigidbody batHingeRB;
+    [SerializeField] HingeJoint hinge;
+    [SerializeField] Transform bat;
     [SerializeField] float batMaxSpeed;
     [SerializeField] float batSwingSpeed;
+    [SerializeField] float batMaxDistance;
+    [SerializeField] float batMaxHeight;
 
     public override void Initialize()
     {
@@ -27,49 +34,84 @@ public class BaseballAgentController : Agent
 
     public override void OnEpisodeBegin()
     {
+        // Set bat values
+        batRotObj.localRotation = Quaternion.identity;
+        batHingeRB.velocity = Vector3.zero;
+        batRB.velocity = Vector3.zero;
+        hinge.useMotor = true;
+        batRB.transform.localRotation = Quaternion.identity;
+        batRB.transform.localPosition = Vector3.back;
+        bat.transform.localPosition = Vector3.zero;
+        bat.gameObject.SetActive(false);
+        ball.gameObject.SetActive(false);
+
+        StartCoroutine(WaitOne());
+        StartCoroutine(ThrowBall());
+    }
+
+    IEnumerator WaitOne()
+    {
+        yield return new WaitForSeconds(.5f);
+
+        bat.gameObject.SetActive(true);
+        batRotObj.transform.localRotation = Quaternion.identity;
+        batHingeRB.velocity = Vector3.zero;
+        batRB.velocity = Vector3.zero;
+        batRB.transform.localRotation = Quaternion.identity;
+        batRB.transform.localPosition = Vector3.back;
+        bat.transform.localPosition = Vector3.zero;
+        hinge.useMotor = false;
+    }
+
+    IEnumerator ThrowBall()
+    {
+        yield return new WaitForSeconds(1f);
+
+
         // Set starting baseball values
-        ball.rb.velocity = ball.transform.forward * UnityEngine.Random.Range(baseballVelocityRange.x, baseballVelocityRange.y);
         ball.transform.localPosition = baseballSpawnPoint;
-        ball.transform.rotation = Quaternion.LookRotation(baseballSpawnPointDir, ball.transform.up);
+        ball.transform.localRotation = Quaternion.LookRotation(baseballSpawnPointDir, ball.transform.up);
         ball.transform.localPosition += Vector3.right * UnityEngine.Random.Range(baseballSpawnAngleXRange.x, baseballSpawnAngleXRange.y);
         ball.transform.localPosition += Vector3.up * UnityEngine.Random.Range(baseballSpawnAngleYRange.x, baseballSpawnAngleYRange.y);
+        ball.rb.velocity = ball.transform.forward * UnityEngine.Random.Range(baseballVelocityRange.x, baseballVelocityRange.y);
 
+        ball.gameObject.SetActive(true);
     }
+
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        /*sensor.AddObservation(ball.transform.localPosition);
+        sensor.AddObservation(ball.transform.localPosition);
         sensor.AddObservation(ball.rb.velocity);
         sensor.AddObservation(bat.localPosition);
-        sensor.AddObservation(batRB.velocity);*/
+        sensor.AddObservation(batRB.velocity);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        //Quaternion batTargetRot = new Quaternion(actionBuffers.ContinuousActions[0], actionBuffers.ContinuousActions[1], actionBuffers.ContinuousActions[2], actionBuffers.ContinuousActions[3]);
-        //Vector3 targetEuler = batTargetRot.eulerAngles;
-        //bat.eulerAngles = new Vector3 (targetEuler.x, 0, targetEuler.z);
-
-
-        Debug.Log("0 : " + actionBuffers.ContinuousActions[0]);
-        Debug.Log("1 : " + actionBuffers.ContinuousActions[1]);
-        Debug.Log("2 : " + actionBuffers.ContinuousActions[2]);
-        Debug.Log("Bat velocity : " + batRB.velocity);
-
         float batDistanceSpeed = 10f;
         // Bat distance from body
-        float batDistance = Mathf.SmoothStep(batHinge.targetPosition.x, actionBuffers.ContinuousActions[0] * batDistanceSpeed, Time.deltaTime);
+        float batDistance = bat.localPosition.x + actionBuffers.ContinuousActions[0] * batDistanceSpeed * Time.deltaTime;
+        batDistance = Mathf.Clamp(batDistance, -batMaxDistance, batMaxDistance);
 
+
+        float batHeightSpeed = 100;
         // Bat height
-        float batHeight = Mathf.SmoothStep(batHinge.targetPosition.y, actionBuffers.ContinuousActions[1] * batDistanceSpeed, Time.deltaTime);
+        float batHeight = batRotObj.eulerAngles.z + -actionBuffers.ContinuousActions[1] * batHeightSpeed * Time.deltaTime;
+        if (batHeight > 180)
+        {
+            batHeight -= 360;
+        }
+        batHeight = Mathf.Clamp(batHeight, -30, 30);
 
         // Apply bat movements
-        batHinge.targetPosition = new Vector3(batDistance, batHeight, 0);
-        batHinge.anchor = Vector3.zero;
+        bat.localPosition = new Vector3(batDistance, 0, 0);
+        batRotObj.transform.localRotation = Quaternion.Euler(0, 0, batHeight);
+
 
         // Swing bat forward
-        batRB.AddForce(batRB.transform.forward * actionBuffers.ContinuousActions[2] * batSwingSpeed * Time.deltaTime, ForceMode.Force);
-        batRB.velocity = Vector3.ClampMagnitude(batRB.velocity, batMaxSpeed);
+        batRB.AddForce(batRB.transform.forward * actionBuffers.ContinuousActions[2] * batSwingSpeed * Time.deltaTime, ForceMode.Acceleration);
+        //batRB.velocity = Vector3.ClampMagnitude(batRB.velocity, batMaxSpeed);
 
     }
 
@@ -97,7 +139,7 @@ public class BaseballAgentController : Agent
     internal void GiveReward(float v)
     {
         SetReward(v);
-        Debug.Log("end episode");
+        ball.gameObject.SetActive(false);
         EndEpisode();
     }
 

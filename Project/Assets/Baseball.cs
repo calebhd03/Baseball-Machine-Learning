@@ -12,11 +12,24 @@ public class Baseball : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
+    private void FixedUpdate()
+    {
+        if(transform.position.y <= 0)
+        {
+            GiveReward();
+        }
+    }
+
     private void OnCollisionEnter(Collision other)
     {
         if (!other.gameObject.CompareTag("Player"))
         {
-            agent.GiveReward(Vector3.Distance(agent.transform.localPosition, this.transform.localPosition));
+            GiveReward();
         }
+    }
+
+    void GiveReward()
+    {
+        agent.GiveReward(Vector3.Distance(agent.transform.localPosition, this.transform.localPosition));
     }
 }
