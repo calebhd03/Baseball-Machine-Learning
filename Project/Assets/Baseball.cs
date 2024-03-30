@@ -30,6 +30,6 @@ public class Baseball : MonoBehaviour
 
     void GiveReward()
     {
-        agent.GiveReward(Vector3.Distance(agent.transform.localPosition, this.transform.localPosition));
+        agent.GiveReward(Vector3.Distance(agent.transform.localPosition, transform.localPosition) * transform.localPosition.x);
     }
 }

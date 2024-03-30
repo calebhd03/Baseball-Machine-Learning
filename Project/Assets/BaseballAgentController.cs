@@ -85,6 +85,7 @@ public class BaseballAgentController : Agent
         sensor.AddObservation(ball.rb.velocity);
         sensor.AddObservation(bat.localPosition);
         sensor.AddObservation(batRB.velocity);
+        sensor.AddObservation(batHingeRB.velocity);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)

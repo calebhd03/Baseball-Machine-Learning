@@ -131,8 +131,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 12
-    NumStackedVectorObservations: 4
+    VectorObservationSize: 15
+    NumStackedVectorObservations: 5
     m_ActionSpec:
       m_NumContinuousActions: 3
       BranchSizes: 
@@ -140,7 +140,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 11400000, guid: 468c183196f1844f69e125c99dd135a1, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 2
   m_BehaviorType: 0
   m_BehaviorName: Baseball
@@ -1217,7 +1217,7 @@ Transform:
   - {fileID: 5951721341348434034}
   - {fileID: 4222753520525961682}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9210183302935734166
 GameObject:

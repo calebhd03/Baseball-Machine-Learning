@@ -1,0 +1,49 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1711755213",
+        "python_version": "3.10.12 | packaged by Anaconda, Inc. | (main, Jul  5 2023, 19:01:18) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "\\\\?\\C:\\Users\\kelly\\miniconda3\\envs\\mlagents20\\Scripts\\mlagents-learn Basic.yaml --run-id=baseballTest1 --resum",
+        "mlagents_version": "1.0.0",
+        "mlagents_envs_version": "1.0.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.1+cu118",
+        "numpy_version": "1.23.1",
+        "end_time_seconds": "1711755224"
+    },
+    "total": 10.449896099999023,
+    "count": 1,
+    "self": 0.008062000000791159,
+    "children": {
+        "run_training.setup": {
+            "total": 0.1129921000028844,
+            "count": 1,
+            "self": 0.1129921000028844
+        },
+        "TrainerController.start_learning": {
+            "total": 10.328841999995348,
+            "count": 1,
+            "self": 0.0001356999928248115,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 10.180862100001832,
+                    "count": 1,
+                    "self": 10.180862100001832
+                },
+                "TrainerController._save_models": {
+                    "total": 0.14784420000069076,
+                    "count": 1,
+                    "self": 0.007991700003913138,
+                    "children": {
+                        "RLTrainer._checkpoint": {
+                            "total": 0.13985249999677762,
+                            "count": 1,
+                            "self": 0.13985249999677762
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

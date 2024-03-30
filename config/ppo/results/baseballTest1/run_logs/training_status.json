@@ -1,0 +1,29 @@
+{
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.2.1+cu118"
+    },
+    "Basic": {
+        "checkpoints": [
+            {
+                "steps": 0,
+                "file_path": "results\\baseballTest1\\Basic\\Basic-0.onnx",
+                "reward": null,
+                "creation_time": 1711755224.088805,
+                "auxillary_file_paths": [
+                    "results\\baseballTest1\\Basic\\Basic-0.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 0,
+            "file_path": "results\\baseballTest1\\Basic.onnx",
+            "reward": null,
+            "creation_time": 1711755224.088805,
+            "auxillary_file_paths": [
+                "results\\baseballTest1\\Basic\\Basic-0.pt"
+            ]
+        }
+    }
+}
