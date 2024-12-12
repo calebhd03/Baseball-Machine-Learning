@@ -23,15 +23,12 @@ public class BaseballAgentController : Agent
     [SerializeField] Rigidbody batHingeRB;
     [SerializeField] HingeJoint hinge;
     [SerializeField] Transform bat;
-    [SerializeField] float batMaxSpeed;
-    [SerializeField] float batSwingSpeed;
-    [SerializeField] float batMaxDistance;
-    [SerializeField] float batMaxHeight;
+    [SerializeField] float batSwingSpeed; // Swing Speed Multiplier
+    [SerializeField] float batMaxDistance; // Max Horizontal distance bat can extend
+    [SerializeField] float batMaxHeight; // Max Vertical distance bat can extend
 
-    public override void Initialize()
-    {
-    }
 
+    // Begining of each agent life
     public override void OnEpisodeBegin()
     {
         // Set bat values
@@ -45,14 +42,15 @@ public class BaseballAgentController : Agent
         bat.gameObject.SetActive(false);
         ball.gameObject.SetActive(false);
 
-        StartCoroutine(WaitOne());
+        StartCoroutine(ResetBat());
         StartCoroutine(ThrowBall());
     }
 
-    IEnumerator WaitOne()
+    IEnumerator ResetBat()
     {
         yield return new WaitForSeconds(.5f);
 
+        // Reset Bat Values
         bat.gameObject.SetActive(true);
         batRotObj.transform.localRotation = Quaternion.identity;
         batHingeRB.velocity = Vector3.zero;
@@ -63,6 +61,7 @@ public class BaseballAgentController : Agent
         hinge.useMotor = false;
     }
 
+    // Initizalizes Baseball values
     IEnumerator ThrowBall()
     {
         yield return new WaitForSeconds(1f);
@@ -112,7 +111,6 @@ public class BaseballAgentController : Agent
 
         // Swing bat forward
         batRB.AddForce(batRB.transform.forward * actionBuffers.ContinuousActions[2] * batSwingSpeed * Time.deltaTime, ForceMode.Acceleration);
-        //batRB.velocity = Vector3.ClampMagnitude(batRB.velocity, batMaxSpeed);
 
     }
 
